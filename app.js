@@ -1,5 +1,5 @@
 // Replace with your deployed Spring Boot Backend URL (e.g., https://your-backend.onrender.com/api)
-const API_BASE_URL = "Available at your primary URL https://monitoring-proxy-backend.onrender.com/api";
+const API_BASE_URL = "https://monitoring-proxy-backend.onrender.com/api";
 
 let latencyChartInstance = null;
 let volumeChartInstance = null;
