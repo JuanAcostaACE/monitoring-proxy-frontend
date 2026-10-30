@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Observabilidad y Auditoría de Proxy de Microservicios</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen p-6 font-sans">
+    <div class="max-w-7xl mx-auto space-y-6">
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center bg-slate-900 p-5 rounded-xl border border-slate-800 gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-cyan-400">Panel de Proxy de Observabilidad y Auditoría</h1>
+                <p class="text-sm text-slate-400">Telemetría en tiempo real para Inventario, Pedidos y Pagos</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="h-3 w-3 rounded-full bg-emerald-500 animate-ping"></span>
+                <span class="text-xs font-mono text-emerald-400">EN VIVO / SONDEO CONTINUO (2.5s)</span>
+            </div>
+        </header>
+
+        <!-- Traffic Simulator Controls -->
+        <section class="bg-slate-900 p-5 rounded-xl border border-slate-800">
+            <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Simular solicitudes de cliente (interceptadas por LoggingProxy)</h2>
+            <div class="flex flex-wrap gap-3">
+                <button onclick="triggerService('inventory', 'CHECK_STOCK')" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg font-medium text-sm transition">
+                    Llamar a Inventario (CHECK_STOCK)
+                </button>
+                <button onclick="triggerService('orders', 'CREATE_ORDER')" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg font-medium text-sm transition">
+                    Llamar a Pedidos (CREATE_ORDER)
+                </button>
+                <button onclick="triggerService('payments', 'PROCESS_PAYMENT')" class="bg-purple-600 hover:bg-purple-500 px-4 py-2 rounded-lg font-medium text-sm transition">
+                    Llamar a Pagos (PROCESS_PAYMENT)
+                </button>
+                <button onclick="simulateTrafficBurst()" class="bg-amber-600 hover:bg-amber-500 px-4 py-2 rounded-lg font-medium text-sm transition ml-auto">
+                    Simular ráfaga (10 llamadas aleatorias)
+                </button>
+            </div>
+        </section>
+
+        <!-- KPI Cards -->
+        <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
+                <p class="text-slate-400 text-xs uppercase">Total de llamadas interceptadas</p>
+                <p id="kpiTotalCalls" class="text-3xl font-bold mt-1 text-white">0</p>
+            </div>
+            <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
+                <p class="text-slate-400 text-xs uppercase">Latencia media global</p>
+                <p id="kpiAvgLatency" class="text-3xl font-bold mt-1 text-cyan-400">0 ms</p>
+            </div>
+            <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
+                <p class="text-slate-400 text-xs uppercase">Total de errores capturados</p>
+                <p id="kpiErrorCount" class="text-3xl font-bold mt-1 text-rose-500">0</p>
+            </div>
+            <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
+                <p class="text-slate-400 text-xs uppercase">Tasa de error global</p>
+                <p id="kpiErrorRate" class="text-3xl font-bold mt-1 text-amber-400">0%</p>
+            </div>
+        </section>
+
+        <!-- Charts -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
+                <h3 class="text-sm font-semibold text-slate-300 mb-4">Tiempo medio de respuesta por microservicio (ms)</h3>
+                <canvas id="latencyChart" height="180"></canvas>
+            </div>
+            <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
+                <h3 class="text-sm font-semibold text-slate-300 mb-4">Volumen de solicitudes vs errores por servicio</h3>
+                <canvas id="volumeChart" height="180"></canvas>
+            </div>
+        </section>
+
+        <!-- Live Audit Log Table -->
+        <section class="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
+            <div class="p-4 border-b border-slate-800">
+                <h3 class="text-sm font-semibold text-slate-300">Rastro de auditoría del proxy en vivo (últimas 50 solicitudes)</h3>
+            </div>
+            <div class="overflow-x-auto max-h-96">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead class="bg-slate-950 text-slate-400 sticky top-0">
+                        <tr>
+                            <th class="p-3">ID</th>
+                            <th class="p-3">Marca de tiempo</th>
+                            <th class="p-3">Microservicio</th>
+                            <th class="p-3">Operación</th>
+                            <th class="p-3">Latencia</th>
+                            <th class="p-3">Estado</th>
+                            <th class="p-3">Mensaje de auditoría</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auditTableBody" class="divide-y divide-slate-800 font-mono text-xs"></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
